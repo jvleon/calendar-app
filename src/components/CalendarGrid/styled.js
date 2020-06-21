@@ -25,3 +25,10 @@ export const CalendarBody = styled.div`
   display: flex;
   flex-wrap: wrap;
 `
+
+export const ControlMenu = styled.div`
+  width: 90%;
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+`
