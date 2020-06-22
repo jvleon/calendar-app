@@ -27,15 +27,39 @@ export const Reminders = styled.div`
   font-size: 12px;
   position: relative;
   cursor: pointer;
-  > .reminder-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    background-color: #e43f5a;
+  > .reminder-container {
+    display: flex;
     border-radius: 3px;
-    margin-bottom: 2px;
-    color: white;
+    padding: 0;
+    height: 20px;
   }
+  > .reminder-container .reminder-label {
+      width: 85%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background-color: transparent;
+      margin-bottom: 2px;
+      color: white;
+  }
+  > .reminder-container .reminder-button {
+      width: 15%;
+      color: white;
+      text-align: center;
+      background-color: transparent;
+      outline: none;
+      border: none;
+      margin-bottom: 2px;
+      padding: 0;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    > .reminder-container .reminder-button:hover {
+      background-color: rgba(0, 0, 0, .25)
+    }
 `
 
 export const ToggleButton = styled.span`

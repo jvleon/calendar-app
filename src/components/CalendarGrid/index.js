@@ -54,7 +54,6 @@ const CalendarGrid = (props) => {
   const [displayModal, setDisplayModal] = useState(false)
   const toggleModal = () => setDisplayModal(!displayModal)
   const currentMonth = 5
-  console.log(props)
   return (
     <>
       <ControlMenu>

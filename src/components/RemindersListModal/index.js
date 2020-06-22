@@ -1,11 +1,22 @@
 import React, { useState } from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Row, Col  } from 'reactstrap'
 import ReminderEdit from '../ReminderEdit'
+import ReminderDeleteModal from '../ConfirmDelete'
 
 const RemindersList = ({ display, toggle, reminders }) => {
   const [showReminderEdit, setShowReminderEdit] = useState(false)
   const [reminderEditData, setReminderEditData] = useState({})
+  const [reminderToDelete, setReminderToDelete] = useState({})
+  const [modalDelete, setModalDelete] = useState(false)
 
+  const setDeleteReminder = data => {
+    setReminderToDelete(data)
+    setModalDelete(true)
+  }
+
+  const toggleModalDelete = () => {
+    setModalDelete(!modalDelete)
+  }
   const toggleModal = () => {
     setShowReminderEdit(!showReminderEdit)
   }
@@ -31,7 +42,7 @@ const RemindersList = ({ display, toggle, reminders }) => {
                 </Col>
                 <Col lg="2">
                   <Button onClick={() => handleEdit({description, date, ...data})} className="mr-2" color="primary">Edit</Button>
-                  <Button color="danger">Delete</Button>
+                  <Button onClick={() => setDeleteReminder({description, date, ...data})} color="danger">Delete</Button>
                 </Col>
               </Row>
             ))
@@ -45,6 +56,11 @@ const RemindersList = ({ display, toggle, reminders }) => {
         display={showReminderEdit}
         toggle={toggleModal}
         data={reminderEditData}
+      />
+      <ReminderDeleteModal 
+        toggle={toggleModalDelete}
+        display={modalDelete}
+        reminderToDelete={reminderToDelete}
       />
     </>
   )
