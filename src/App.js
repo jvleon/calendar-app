@@ -5,6 +5,7 @@ import Home from './containers/Home'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-datepicker/dist/react-datepicker.css'
 import { createGlobalStyle } from 'styled-components'
+import { ToastProvider } from 'react-toast-notifications'
 
 const GlobalStyle = createGlobalStyle`
   .react-datepicker-wrapper,
@@ -24,13 +25,18 @@ const GlobalStyle = createGlobalStyle`
     background-color: #e9ecef;
     opacity: 1;
   }
+  .react-toast-notifications__container {
+    z-index: 9999 !important;
+  }
 `
 
 function App() {
   return (
     <Provider store={store}>
-      <Home />
-      <GlobalStyle whiteColor />
+      <ToastProvider>
+        <Home />
+        <GlobalStyle whiteColor />
+      </ToastProvider>
     </Provider>
   )
 }

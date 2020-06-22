@@ -1,5 +1,7 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 import Reminders from './reducers/reminders'
 
-export default createStore(Reminders, applyMiddleware(thunk))
+const rootReducer = combineReducers({ reminders: Reminders })
+
+export default createStore(rootReducer, applyMiddleware(thunk))

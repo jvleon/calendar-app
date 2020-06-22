@@ -26,8 +26,8 @@ export const Reminders = styled.div`
   overflow: hidden;
   font-size: 12px;
   position: relative;
-  cursor: pointer;
   > .reminder-container {
+    cursor: pointer;
     display: flex;
     border-radius: 3px;
     padding: 0;

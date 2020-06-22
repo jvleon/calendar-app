@@ -3,14 +3,18 @@ import { connect } from 'react-redux'
 import { useToasts } from 'react-toast-notifications'
 import DatePicker from 'react-datepicker'
 import { GithubPicker  } from 'react-color';
+import Select from 'react-select'
 import moment from 'moment'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap'
 import { addReminder } from '../../actions'
 import 'react-datepicker/dist/react-datepicker.css'
+import options from '../../cities'
 
 const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
   const [date, setDate] = useState(new Date())
   const [editEnable, setEditEnable] = useState(false)
+  const [selectedCity, setSelectedCity] = useState()
+
   const [state, setState] = useState({
     description: '',
     city: '',
@@ -21,10 +25,18 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
     if(!isNew && data && data.hasOwnProperty('date')) {
       setState(data)
       setDate(data.date.toDate())
+      const currentCity = options.filter(({ label }) => {
+        console.log(label, data.city)
+        return label === data.city
+      })
+      console.log(currentCity);
+      
+      setSelectedCity(currentCity[0])
     }
   }, [data])
 
   useEffect(() => {
+    // reset modal fields on hide
     if(!display) {
       setDate(new Date())
       setState({
@@ -33,6 +45,7 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
         color: ''
       })
       setEditEnable(false)
+      setSelectedCity({})
     }
   }, [display])
 
@@ -52,7 +65,7 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
     newState['color'] = hex    
     setState({ ...newState })    
   }
-
+  // is called when the action is finished 
   const onSucces = () => {
     const message = isNew ? 'Reminder added' : 'Reminder updated'
     addToast(message, {
@@ -87,6 +100,11 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
       })    
     }
   }  
+
+  const handleChangeSelect = selection => {
+    setSelectedCity(selection)
+    setState({ ...state, city: selection.label })
+  }
   
   return (
     <Modal isOpen={display} toggle={toggle}>
@@ -109,13 +127,11 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
           </FormGroup>
           <FormGroup>
             <Label>City</Label>
-            <Input 
-              value={state['city']}
-              type="text"
-              name="city"
-              disabled={isNew ? false : !editEnable}
-              onChange={handleOnChange}
-              required
+            <Select 
+              options={options}
+              isDisabled={isNew ? false : !editEnable}
+              value={selectedCity}
+              onChange={handleChangeSelect}
             />
           </FormGroup>
           <FormGroup>
