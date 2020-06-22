@@ -3,42 +3,30 @@ import { MainContainer, DayNumber, Reminders, ToggleButton } from './styled'
 import RemindersListModal from '../RemindersListModal'
 import ReminderEdit from '../ReminderEdit'
 
-const reminders = [
-  {
-    description: 'Visita a los lagos'
-  },
-  {
-    description: 'Visita a la monatanha con los amigos'
-  },
-  {
-    description: 'Cita con el doctor'
-  },
-  {
-    description: 'Cine'
-  },
-  {
-    description: 'Cenas'
-  }
-]
-
-const DaySquare = ({ day, nameDay }) => {
+const DaySquare = ({ day, nameDay, reminders, currentMonth, month }) => {
   const [showRemindersList, setShowRemindersList] = useState(false)
   const [showReminderEdit, setShowReminderEdit] = useState(false)
+  const [reminderEditData, setReminderEditData] = useState({})
   const toggleModal = () => {
     setShowRemindersList(!showRemindersList)
   }
 
+  const handleEdit = (data) => {
+    setReminderEditData(data)
+    setShowReminderEdit(!showReminderEdit)
+  }
+
   return (
     <MainContainer isWeekend={nameDay === 'saturday' || nameDay === 'sunday'}>
-      <DayNumber>{day}</DayNumber>
+      <DayNumber currentMonth={currentMonth === month}>{day}</DayNumber>
       <Reminders>
         {
-          reminders.map(({ description }, i) => {
+          reminders.map(({ description, color, ...data }, i) => {
             // only renders the first 3 reminders on the calendar for each day
             if(i < 3) 
-              return <div onClick={() => setShowReminderEdit(!showReminderEdit)} key={i} className="reminder-label">
-                        {description}
-                      </div>
+              return <div style={{ backgroundColor: color }} onClick={() => handleEdit({color, description, ...data})} key={i} className="reminder-label">
+                      {description}
+                    </div>
           })
         }
         {
@@ -46,7 +34,7 @@ const DaySquare = ({ day, nameDay }) => {
             <ToggleButton onClick={toggleModal}>Show more</ToggleButton>
         }
       </Reminders>
-      <ReminderEdit display={showReminderEdit} toggle={() => setShowReminderEdit(!showReminderEdit)} />
+      <ReminderEdit data={reminderEditData} display={showReminderEdit} toggle={() => setShowReminderEdit(!showReminderEdit)} />
       <RemindersListModal display={showRemindersList} toggle={toggleModal} reminders={reminders} />
     </MainContainer>
   )

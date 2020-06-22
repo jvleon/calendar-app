@@ -16,6 +16,7 @@ export const MainContainer = styled.div`
 export const DayNumber = styled.span`
   color: #1f4068;
   font-weight: 500;
+  opacity: ${({ currentMonth }) =>  currentMonth ? '1' : '0.5'}
 `
 
 export const Reminders = styled.div`
