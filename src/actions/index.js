@@ -20,8 +20,8 @@ export const deleteReminder = (reminderToDelete, reminders, callback) => {
   }
 }
 
-export const getWeatherByCityId = (cityId) => dispatch => {
-  const apiURL = `http://api.openweathermap.org/data/2.5/weather?id=${cityId}&appid=${apiKey}`
+export const getWeatherByCityId = (cityId, time) => dispatch => {
+  const apiURL = `http://api.openweathermap.org/data/2.5/weather?id=${cityId}&start=${time}&end=${time}&appid=${apiKey}`
   fetch(apiURL, { method: 'GET' })
   .then(response => response.json())
   .then(response => {

@@ -34,17 +34,19 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
       return label === data.city
     })
     setSelectedCity(currentCity[0]);
-    console.log(selectedCity, currentCity);
   }
 
   useEffect(() => {    
-    if(selectedCity && selectedCity.value & !isNew) props.getWeatherByCityId(selectedCity.value)
+    if(selectedCity && selectedCity.value & !isNew) {
+      let unixtime = data.date.unix()
+      props.getWeatherByCityId(selectedCity.value, unixtime)
+    }
   }, [selectedCity])
 
   useEffect(() => {
     if(props.weather && !isNew && selectedCity) {
       let cel = getCelcius(props.weather)
-      setCurrentWeather(cel)
+      setCurrentWeather(cel)      
     }
   }, [props.weather])
 
@@ -117,9 +119,7 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
 
   const handleChangeSelect = selection => {
     setSelectedCity(selection)
-    setState({ ...state, city: selection.label })
-    console.log(selection);
-    
+    setState({ ...state, city: selection.label })    
   }
 
   const getCelcius = ({ weather }) => {
@@ -137,6 +137,7 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
         props.weather && selectedCity && selectedCity['label'] &&
         <div>
           {`Temperature in ${selectedCity['label']} - ${currentWeather}°`}
+          {props.weather && props.weather.weather && ` - ${props.weather.weather.weather[0].description}`}
         </div>
       }
       </ModalHeader>
