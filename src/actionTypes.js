@@ -1,0 +1,4 @@
+export const NEW_REMINDER = 'NEW_REMINDER'
+export const DELETE_REMINDER = 'DELETE_REMINDER'
+export const CLEAR_WEATHER = 'CLEAR_WEATHER'
+export const GET_WEATHER = 'GET_WEATHER'
