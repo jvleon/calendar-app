@@ -6,7 +6,7 @@ import { GithubPicker  } from 'react-color';
 import Select from 'react-select'
 import moment from 'moment'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from 'reactstrap'
-import { addReminder } from '../../actions'
+import { addReminder, getWeatherByCityId, resetWeather } from '../../actions'
 import 'react-datepicker/dist/react-datepicker.css'
 import options from '../../cities'
 
@@ -14,7 +14,7 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
   const [date, setDate] = useState(new Date())
   const [editEnable, setEditEnable] = useState(false)
   const [selectedCity, setSelectedCity] = useState()
-
+  const [currentWeather, setCurrentWeather] = useState()
   const [state, setState] = useState({
     description: '',
     city: '',
@@ -24,16 +24,29 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
   useEffect(() => {    
     if(!isNew && data && data.hasOwnProperty('date')) {
       setState(data)
-      setDate(data.date.toDate())
-      const currentCity = options.filter(({ label }) => {
-        console.log(label, data.city)
-        return label === data.city
-      })
-      console.log(currentCity);
-      
-      setSelectedCity(currentCity[0])
+      setDate(data.date.toDate()) 
+      getSelectedCity() 
     }
   }, [data])
+
+  const getSelectedCity = async () => {
+    const currentCity = await options.filter(({ label }) => {
+      return label === data.city
+    })
+    setSelectedCity(currentCity[0]);
+    console.log(selectedCity, currentCity);
+  }
+
+  useEffect(() => {    
+    if(selectedCity && selectedCity.value & !isNew) props.getWeatherByCityId(selectedCity.value)
+  }, [selectedCity])
+
+  useEffect(() => {
+    if(props.weather && !isNew && selectedCity) {
+      let cel = getCelcius(props.weather)
+      setCurrentWeather(cel)
+    }
+  }, [props.weather])
 
   useEffect(() => {
     // reset modal fields on hide
@@ -45,7 +58,8 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
         color: ''
       })
       setEditEnable(false)
-      setSelectedCity({})
+      setSelectedCity(null)
+      props.resetWeather()
     }
   }, [display])
 
@@ -104,12 +118,27 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
   const handleChangeSelect = selection => {
     setSelectedCity(selection)
     setState({ ...state, city: selection.label })
+    console.log(selection);
+    
   }
-  
+
+  const getCelcius = ({ weather }) => {
+    const cel = weather.main.temp - 273.1
+    return cel.toFixed(2)
+  }
+
   return (
     <Modal isOpen={display} toggle={toggle}>
       <ModalHeader>
-        Reminder
+      {
+        isNew ?
+        <div>New Reminder</div>
+        :
+        props.weather && selectedCity && selectedCity['label'] &&
+        <div>
+          {`Temperature in ${selectedCity['label']} - ${currentWeather}°`}
+        </div>
+      }
       </ModalHeader>
       <ModalBody>
         <Form>
@@ -160,9 +189,11 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
           </FormGroup>
           <FormGroup>
             <Label>Color</Label>
-            <div style={{ color: state.color }}>{state.color.length > 0 ? state.color : 'chose a color'}</div>
+            <div style={{ color: state.color, fontWeight: 700 }}>{state.color.length > 0 ? state.color : 'chose a color'}</div>
             <GithubPicker
-              onChange={handleChangeColor}
+              onChangeComplete={handleChangeColor}
+              color={state.color}
+              disabled={isNew ? false : !editEnable}
             />
           </FormGroup>
         </Form>
@@ -188,12 +219,15 @@ const ReminderCreate = ({ display, toggle, isNew, data, ...props }) => {
   )
 }
 
-const mapStateToProps = ({ reminders }) => ({
-  reminders: reminders.remindersList
+const mapStateToProps = ({ reminders, weather }) => ({
+  reminders: reminders.remindersList,
+  weather
 })
 
 const mapDispatchToProps = {
-  addReminder
+  addReminder,
+  getWeatherByCityId,
+  resetWeather
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReminderCreate)

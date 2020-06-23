@@ -10,7 +10,7 @@ const Reminders = (state = initialState, { payload, type }) => {
     case DELETE_REMINDER:
       return {
         ...state,
-        remindersList: payload
+        remindersList: [...payload]
       }
     default:
       return {
